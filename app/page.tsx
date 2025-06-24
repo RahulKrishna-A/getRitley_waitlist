@@ -8,6 +8,7 @@ import Particles from "@/components/ui/particles";
 import Header from "@/components/header";
 import { addToWaitlist, getAnalyticsInstance } from "@/lib/firebase";
 import { logEvent } from "firebase/analytics";
+import Footer from "@/components/footer";
 
 
 export default function Home() {
@@ -175,6 +176,8 @@ export default function Home() {
           handleSubmit={handleSubmit}
           loading={loading}
         />
+
+        <Footer />
 
       </section>
 
