@@ -44,50 +44,56 @@ export default function Home() {
     const promise = new Promise(async (resolve, reject) => {
       try {
         // First, attempt to add to Firebase
-        const firebaseResult = await addToWaitlist(email);
+        const firebaseResult = await addToWaitlist(name, email);
         
         if (!firebaseResult.success) {
           reject("Firebase insertion failed");
           return;
-        }
-
-        // Then, attempt to send the email
-        const mailResponse = await fetch("/api/mail", {
-          cache: "no-store",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ firstname: name, email }),
-        });
-
-        if (!mailResponse.ok) {
-          if (mailResponse.status === 429) {
-            reject("Rate limited");
-          } else {
-            reject("Email sending failed");
-          }
-          return; // Exit the promise early if mail sending fails
-        }
-
-        // If email sending is successful, proceed to insert into Notion
-        const notionResponse = await fetch("/api/notion", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, email }),
-        });
-
-        if (!notionResponse.ok) {
-          if (notionResponse.status === 429) {
-            reject("Rate limited");
-          } else {
-            reject("Notion insertion failed");
-          }
-        } else {
+        }else {
           resolve({ name });
         }
+        // TODO: Add email service here
+        // Turn it on when we have a proper email service
+
+
+        // // Then, attempt to send the email
+        // const mailResponse = await fetch("/api/mail", {
+        //   cache: "no-store",
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ firstname: name, email }),
+        // });
+
+        // if (!mailResponse.ok) {
+        //   if (mailResponse.status === 429) {
+        //     reject("Rate limited");
+        //   } else {
+        //     reject("Email sending failed");
+        //   }
+        //   return; // Exit the promise early if mail sending fails
+        // }
+
+        // // If email sending is successful, proceed to insert into Notion
+        // const notionResponse = await fetch("/api/notion", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ name, email }),
+        // });
+
+        // if (!notionResponse.ok) {
+        //   if (notionResponse.status === 429) {
+        //     reject("Rate limited");
+        //   } else {
+        //     reject("Notion insertion failed");
+        //   }
+        // } else {
+        //   resolve({ name });
+        // }
+
       } catch (error) {
         reject(error);
       }
