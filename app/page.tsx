@@ -1,24 +1,46 @@
 "use client";
 
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CTA from "@/components/cta";
 import Form from "@/components/form";
 import Particles from "@/components/ui/particles";
 import Header from "@/components/header";
 import { addToWaitlist } from "@/lib/firebase";
+import { getAnalytics, logEvent } from "firebase/analytics";
+
 
 export default function Home() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [hasStartedFilling, setHasStartedFilling] = useState<boolean>(false);
+
+  const analytics = getAnalytics();
+
+
+  useEffect(()=>{
+    logEvent(analytics, 'page_viewed');
+  })
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
+    
+    // Track when user starts filling the waitlist form
+    if (!hasStartedFilling && event.target.value.trim() !== "") {
+      setHasStartedFilling(true);
+      logEvent(analytics, 'waitlist_started_filling');
+    }
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
+    
+    // Track when user starts filling the waitlist form
+    if (!hasStartedFilling && event.target.value.trim() !== "") {
+      setHasStartedFilling(true);
+      logEvent(analytics, 'waitlist_started_filling');
+    }
   };
 
   const isValidEmail = (email: string) => {
@@ -43,11 +65,16 @@ export default function Home() {
       try {
         // First, attempt to add to Firebase
         const firebaseResult = await addToWaitlist(name, email);
-        
+
         if (!firebaseResult.success) {
           reject("Firebase insertion failed");
           return;
-        }else {
+        } else {
+          // Log successful waitlist submission
+          logEvent(analytics, 'waitlist_submitted', {
+            user_name: name,
+            user_email: email
+          });
           resolve({ name });
         }
         // TODO: Add email service here
@@ -139,7 +166,7 @@ export default function Home() {
           loading={loading}
         />
 
-      
+
       </section>
 
 

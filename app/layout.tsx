@@ -2,7 +2,6 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import { Analytics } from "@vercel/analytics/react";
 
 const FigtreeFont = Figtree({ subsets: ["latin"] });
 
