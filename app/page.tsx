@@ -6,8 +6,8 @@ import CTA from "@/components/cta";
 import Form from "@/components/form";
 import Particles from "@/components/ui/particles";
 import Header from "@/components/header";
-import { addToWaitlist } from "@/lib/firebase";
-import { getAnalytics, logEvent } from "firebase/analytics";
+import { addToWaitlist, getAnalyticsInstance } from "@/lib/firebase";
+import { logEvent } from "firebase/analytics";
 
 
 export default function Home() {
@@ -16,12 +16,13 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasStartedFilling, setHasStartedFilling] = useState<boolean>(false);
 
-  const analytics = getAnalytics();
-
-
-  useEffect(()=>{
-    logEvent(analytics, 'page_viewed');
-  })
+  useEffect(() => {
+    // Only log analytics events in the browser
+    const analytics = getAnalyticsInstance();
+    if (analytics) {
+      logEvent(analytics, 'page_viewed');
+    }
+  }, []);
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -29,7 +30,10 @@ export default function Home() {
     // Track when user starts filling the waitlist form
     if (!hasStartedFilling && event.target.value.trim() !== "") {
       setHasStartedFilling(true);
-      logEvent(analytics, 'waitlist_started_filling');
+      const analytics = getAnalyticsInstance();
+      if (analytics) {
+        logEvent(analytics, 'waitlist_started_filling');
+      }
     }
   };
 
@@ -39,7 +43,10 @@ export default function Home() {
     // Track when user starts filling the waitlist form
     if (!hasStartedFilling && event.target.value.trim() !== "") {
       setHasStartedFilling(true);
-      logEvent(analytics, 'waitlist_started_filling');
+      const analytics = getAnalyticsInstance();
+      if (analytics) {
+        logEvent(analytics, 'waitlist_started_filling');
+      }
     }
   };
 
@@ -71,10 +78,13 @@ export default function Home() {
           return;
         } else {
           // Log successful waitlist submission
-          logEvent(analytics, 'waitlist_submitted', {
-            user_name: name,
-            user_email: email
-          });
+          const analytics = getAnalyticsInstance();
+          if (analytics) {
+            logEvent(analytics, 'waitlist_submitted', {
+              user_name: name,
+              user_email: email
+            });
+          }
           resolve({ name });
         }
         // TODO: Add email service here

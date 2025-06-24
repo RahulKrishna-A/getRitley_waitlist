@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, Analytics } from "firebase/analytics";
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyA0CA-LV4iXqkX2kugoRjgJRoatDE6y88Q",
@@ -14,7 +14,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Initialize Analytics safely (only in browser)
+let analytics: Analytics | null = null;
+
+export const getAnalyticsInstance = () => {
+  if (typeof window !== 'undefined' && !analytics) {
+    analytics = getAnalytics(app);
+  }
+  return analytics;
+};
+
 // Initialize Firestore
 export const db = getFirestore(app);
 
