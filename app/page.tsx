@@ -8,6 +8,7 @@ import Logos from "@/components/logos";
 import Particles from "@/components/ui/particles";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { addToWaitlist } from "@/lib/firebase";
 
 export default function Home() {
   const [name, setName] = useState<string>("");
@@ -42,7 +43,15 @@ export default function Home() {
 
     const promise = new Promise(async (resolve, reject) => {
       try {
-        // First, attempt to send the email
+        // First, attempt to add to Firebase
+        const firebaseResult = await addToWaitlist(email);
+        
+        if (!firebaseResult.success) {
+          reject("Firebase insertion failed");
+          return;
+        }
+
+        // Then, attempt to send the email
         const mailResponse = await fetch("/api/mail", {
           cache: "no-store",
           method: "POST",
@@ -94,6 +103,8 @@ export default function Home() {
       error: (error) => {
         if (error === "Rate limited") {
           return "You're doing that too much. Please try again later";
+        } else if (error === "Firebase insertion failed") {
+          return "Failed to save to database. Please try again 😢.";
         } else if (error === "Email sending failed") {
           return "Failed to send email. Please try again 😢.";
         } else if (error === "Notion insertion failed") {
