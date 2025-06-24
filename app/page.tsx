@@ -176,10 +176,7 @@ export default function Home() {
           loading={loading}
         />
 
-
       </section>
-
-
 
       <Particles
         quantityDesktop={350}
