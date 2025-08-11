@@ -6,9 +6,34 @@ import { Toaster } from "@/components/ui/sonner";
 const FigtreeFont = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "getritely - Copilot for social growth",
-  description:
-    "Your AI Copilot for Social Media Growth",
+  metadataBase: new URL("https://getritely.com"),
+  title: {
+    default: "getritely - Copilot for social growth",
+    template: "%s | GetRitely",
+  },
+  description: "Your AI Copilot for Social Media Growth",
+  openGraph: {
+    title: "getritely - Copilot for social growth",
+    description: "Your AI Copilot for Social Media Growth",
+    url: "https://getritely.com/",
+    siteName: "GetRitely",
+    images: [
+      {
+        url: "/opengraph-image2.png",
+        width: 1280,
+        height: 832,
+        type: "image/png",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "getritely - Copilot for social growth",
+    description: "Your AI Copilot for Social Media Growth",
+    images: ["/opengraph-image2.png"],
+  },
 };
 
 export default function RootLayout({
@@ -18,22 +43,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <meta property="og:image" content="/opengraph-image2.png" />
-      <meta property="og:image:type" content="image/png" />
-      <meta property="og:image:width" content="1280" />
-      <meta property="og:image:height" content="832" />
-      <meta
-        property="og:site_name"
-        content="GetRitely"
-      />
-      <meta
-        property="og:url"
-        content="https://getritely.com/"
-      />
-      <meta name="twitter:image" content="/opengraph-image2.png" />
-      <meta name="twitter:image:type" content="image/png" />
-      <meta name="twitter:image:width" content="1280" />
-      <meta name="twitter:image:height" content="832" />
       <body className={FigtreeFont.className}>
         {children}
         <Toaster richColors position="top-center" />
